@@ -10,7 +10,14 @@ export function getTurso() {
     const authToken = process.env.TURSO_AUTH_TOKEN;
 
     if (url.startsWith("file:")) {
-      mkdirSync("./data", { recursive: true });
+      try {
+        mkdirSync("./data", { recursive: true });
+      } catch (error) {
+        // На Vercel локальный файл недоступен — нужен TURSO_DATABASE_URL
+        throw new Error(
+          `Local SQLite unavailable (${error instanceof Error ? error.message : "error"}). Set TURSO_DATABASE_URL.`,
+        );
+      }
     }
 
     client = createClient({
@@ -23,8 +30,8 @@ export function getTurso() {
 }
 
 async function createSchema(db: Client) {
-  await db.executeMultiple(`
-    create table if not exists users (
+  const statements = [
+    `create table if not exists users (
       id text primary key,
       name text not null,
       email text not null unique,
@@ -32,18 +39,16 @@ async function createSchema(db: Client) {
       role text not null default 'manager',
       is_active integer not null default 1,
       created_at text not null
-    );
-
-    create table if not exists clients (
+    )`,
+    `create table if not exists clients (
       id text primary key,
       name text not null,
       phone text not null,
       email text,
       notes text,
       created_at text not null
-    );
-
-    create table if not exists leads (
+    )`,
+    `create table if not exists leads (
       id text primary key,
       client_id text not null references clients(id),
       source text not null default 'manual',
@@ -53,9 +58,8 @@ async function createSchema(db: Client) {
       notes text,
       created_at text not null,
       updated_at text not null
-    );
-
-    create table if not exists tasks (
+    )`,
+    `create table if not exists tasks (
       id text primary key,
       lead_id text references leads(id),
       client_id text references clients(id),
@@ -64,8 +68,12 @@ async function createSchema(db: Client) {
       due_date text,
       status text not null default 'pending',
       created_at text not null
-    );
-  `);
+    )`,
+  ];
+
+  for (const sql of statements) {
+    await db.execute(sql);
+  }
 }
 
 export async function ensureSchema() {
