@@ -28,4 +28,5 @@ npm run dev
 ## Заметки
 
 - В Next.js 16 auth-gate реализован через `proxy.ts` (вместо deprecated `middleware.ts`).
-- Интеграции с формой сайта и Telegram webhook — по спеке, отдельным шагом после деплоя.
+- Приём заявок с сайта: `POST /api/ingest/feedback` с заголовком `Authorization: Bearer $CRM_INGEST_SECRET`.
+  Тело: `{ "name", "contact", "message" }` → клиент + лид со статусом `new`, источник `website_form`.
