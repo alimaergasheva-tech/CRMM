@@ -112,3 +112,28 @@ export const LEAD_SOURCES: LeadSource[] = [
   "manual",
   "other",
 ];
+
+export type SocialPlatform = "telegram" | "youtube" | "instagram";
+
+export interface ContentPost {
+  title: string;
+  body: string;
+  cta: string;
+  hashtags: string[];
+}
+
+export interface GeneratedPostRecord extends ContentPost {
+  id: string;
+  user_id: string;
+  platform: SocialPlatform;
+  topic: string;
+  created_at: string;
+}
+
+export const SOCIAL_PLATFORMS: SocialPlatform[] = ["telegram", "youtube", "instagram"];
+
+export const SOCIAL_PLATFORM_LABELS: Record<SocialPlatform, string> = {
+  telegram: "Telegram",
+  youtube: "YouTube",
+  instagram: "Instagram",
+};

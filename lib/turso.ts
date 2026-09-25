@@ -69,6 +69,17 @@ async function createSchema(db: Client) {
       status text not null default 'pending',
       created_at text not null
     )`,
+    `create table if not exists generated_posts (
+      id text primary key,
+      user_id text not null references users(id),
+      platform text not null,
+      topic text not null,
+      title text not null,
+      body text not null,
+      cta text not null,
+      hashtags text not null,
+      created_at text not null
+    )`,
   ];
 
   for (const sql of statements) {

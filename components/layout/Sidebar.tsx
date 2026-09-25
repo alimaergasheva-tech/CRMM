@@ -10,6 +10,7 @@ const links = [
   { href: "/leads", label: "Заявки" },
   { href: "/clients", label: "Клиенты" },
   { href: "/tasks", label: "Задачи" },
+  { href: "/content", label: "Контент" },
   { href: "/users", label: "Сотрудники", adminOnly: true },
 ];
 
